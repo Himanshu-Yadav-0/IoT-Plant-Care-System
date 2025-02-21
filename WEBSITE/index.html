@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Plant Monitor</h1>
+            <div class="input-group">
+                <input type="text" id="plantName" placeholder="Enter plant name...">
+                <button id="submitBtn">Check Plant</button>
+            </div>
+            
+            <div id="loadingIndicator" class="loading-indicator hidden">
+                <div class="spinner"></div>
+                <p>Analyzing plant data...</p>
+            </div>
+
+            <div id="resultCard" class="result-card hidden">
+                <div class="data-section">
+                    <h2>Recommended Levels</h2>
+                    <div class="sensor-grid recommended">
+                        <div class="sensor-item">
+                            <span class="label">Moisture</span>
+                            <span id="recommendedMoisture" class="value">--</span>
+                        </div>
+                        <div class="sensor-item">
+                            <span class="label">Temperature</span>
+                            <span id="recommendedTemperature" class="value">--</span>
+                        </div>
+                        <div class="sensor-item">
+                            <span class="label">Humidity</span>
+                            <span id="recommendedHumidity" class="value">--</span>
+                        </div>
+                        <div class="sensor-item">
+                            <span class="label">Light</span>
+                            <span id="recommendedLight" class="value">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <h2>Current Readings</h2>
+                    <div class="sensor-grid">
+                        <div class="sensor-item">
+                            <span class="label">Moisture</span>
+                            <span id="currentMoisture" class="value">--</span>
+                        </div>
+                        <div class="sensor-item">
+                            <span class="label">Temperature</span>
+                            <span id="currentTemp" class="value">--</span>
+                        </div>
+                        <div class="sensor-item">
+                            <span class="label">Humidity</span>
+                            <span id="currentHumidity" class="value">--</span>
+                        </div>
+                        <div class="sensor-item">
+                            <span class="label">Light</span>
+                            <span id="currentLight" class="value">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <h2>Care Suggestion</h2>
+                    <p id="careSuggestion" class="suggestion">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

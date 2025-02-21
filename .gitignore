@@ -1,0 +1,165 @@
+# Compiled source files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyc # Python bytecode
+*.pyo # Optimized Python bytecode
+*.rbc # Ruby bytecode
+*.beam # Erlang bytecode
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+*.bak
+*.dump
+*.journal
+*.ldb
+
+# Dependency directories
+node_modules/
+vendor/
+venv/
+env/
+.gradle/
+.bundle/
+Pods/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+[Tt]rash
+._*
+
+# IDE specific files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*.code-workspace
+.vscode/
+
+# Temporary files
+*~
+\#*#
+*.tmp
+*.temp
+*.cache
+.sass-cache/
+.sass-cache/
+.rvmrc
+.tool-versions
+
+# Package files
+package-lock.json
+yarn.lock
+composer.lock
+Gemfile.lock
+Pipfile.lock
+poetry.lock
+
+# Build output
+build/
+dist/
+target/
+out/
+bin/
+
+# Environment variables
+.env
+.env.*
+!.env.example # Keep your example env file
+
+# Secret files
+*.pem
+*.key
+*.p12
+
+# Specific files or folders to ignore
+# example: secret_folder/
+# example: secret_file.txt
+
+# If you use docker
+docker-compose.override.yml
+.dockerenv
+
+# If you use Kubernetes
+.kubernetes-cli/
+.kube/
+
+# If you use Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# If you use JetBrains products (IntelliJ, PyCharm, etc.)
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/runConfigurations/
+.idea/dictionaries/
+
+# If you use Eclipse
+.settings/
+.project
+.classpath
+
+# If you use Netbeans
+nbproject/private/
+build/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# If you use Visual Studio
+*.csproj.user
+*.sln.docstates
+*.vssscc
+*.vspscc
+*.user
+ipch/
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+[Aa]spNetCompileMerge/
+[Aa]spNetPublish/
+[Ll]og/
+[Ss]db/
+obj/
+
+# If you use Android Studio
+.gradle/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+local.properties
+/.idea/assetWizardSettings.xml
+.DS_Store
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+.gradle/
+.idea/assetWizardSettings.xml
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+local.properties
+*.iml
+.gradle
+/build
+/captures
+.externalNativeBuild
+.cxx

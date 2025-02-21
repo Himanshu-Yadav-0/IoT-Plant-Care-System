@@ -100,8 +100,9 @@ Then open `http://localhost:8000` in your browser.
 *(Insert UI screenshots of the website and API response results.)*
 
 ## 💡 Contributors
-- **Himanshu** - Website & MongoDB Integration
-- **[Friend's Name]** - Flask API & ESP Server
+- **Himanshu Yadav** - Website & MongoDB Integration
+- **Tanish Sidana** - Flask API & ESP Server
+- **Rajveer Singh Shekhawat & Geet Gaggar** - Circuit Architecture & Arduino Code
 
 ## 📜 License
 This project is **open-source**.

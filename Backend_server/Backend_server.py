@@ -18,7 +18,7 @@ FRIEND_SERVER_URL = "http://192.168.0.18:5001/sensor_data"
 UPDATE_MOISTURE_URL = "http://192.168.0.18:5001/update_moisture"
 
 # Load the JSON data from the file
-with open("plants_data3.json", "r", encoding="utf-8") as file:
+with open("plants_data2.json", "r", encoding="utf-8") as file:
     plant_data = json.load(file)
 
 # Function to add dataset to MongoDB
@@ -38,7 +38,7 @@ def home():
 def fetch_sensor_data():
     """ Fetch the latest sensor data from friend's server """
     try:
-        sensor_response = requests.get(FRIEND_SERVER_URL, timeout=3)
+        sensor_response = requests.get(FRIEND_SERVER_URL, timeout=2)
         if sensor_response.status_code == 200:
             return sensor_response.json(), 200
         else:
@@ -68,7 +68,7 @@ def compare_plant():
 
         # Fetch real-time sensor data
         try:
-            sensor_response = requests.get(FRIEND_SERVER_URL, timeout=3)
+            sensor_response = requests.get(FRIEND_SERVER_URL, timeout=2)
             if sensor_response.status_code == 200:
                 sensor_data = sensor_response.json()
                 data_source = "real"
@@ -130,8 +130,8 @@ def compare_plant():
         try:
             update_response = requests.post(
                 UPDATE_MOISTURE_URL, 
-                json={"soil_moisture": soil_moisture, "pump_status": pump_status},
-                timeout=3
+                json={"threshold": plant["ideal_moisture"], "pump_status": pump_status},
+                timeout=2
             )
             if update_response.status_code == 200:
                 print(f"✅ Pump status updated successfully: {pump_status}")

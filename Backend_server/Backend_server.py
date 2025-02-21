@@ -18,7 +18,7 @@ FRIEND_SERVER_URL = "http://192.168.0.18:5001/sensor_data"
 UPDATE_MOISTURE_URL = "http://192.168.0.18:5001/update_moisture"
 
 # Load the JSON data from the file
-with open("plants_data.json", "r", encoding="utf-8") as file:
+with open("plants_data3.json", "r", encoding="utf-8") as file:
     plant_data = json.load(file)
 
 # Function to add dataset to MongoDB

@@ -2,70 +2,91 @@ document.addEventListener('DOMContentLoaded', () => {
     const plantNameInput = document.getElementById('plantName');
     const submitBtn = document.getElementById('submitBtn');
     const loadingIndicator = document.getElementById('loadingIndicator');
-    const resultCard = document.getElementById('resultCard');
+    const recommendedSection = document.getElementById('recommendedSection');
+    const suggestionSection = document.getElementById('suggestionSection');
 
     // Elements for displaying data
     const recommendedMoisture = document.getElementById('recommendedMoisture');
+    const recommendedHumidity = document.getElementById('recommendedHumidity');
+    const recommendedLight = document.getElementById('recommendedLight');
+    const recommendedTemperature = document.getElementById('recommendedTemperature');
     const currentMoisture = document.getElementById('currentMoisture');
     const currentTemp = document.getElementById('currentTemp');
     const currentHumidity = document.getElementById('currentHumidity');
     const currentLight = document.getElementById('currentLight');
     const careSuggestion = document.getElementById('careSuggestion');
 
-    submitBtn.addEventListener('click', async () => {
-        const plantName = plantNameInput.value.trim();
-        
-        if (!plantName) {
-            alert('Please enter a plant name');
-            return;
-        }
+    let selectedPlant = ""; // Store selected plant name
 
-        // Show loading indicator and hide results
-        loadingIndicator.classList.remove('hidden');
-        resultCard.classList.add('hidden');
+    // ✅ Fetch real-time sensor data immediately and every 5 seconds
+    async function fetchSensorData() {
+        try {
+            const response = await fetch('http://192.168.0.52:5002/fetch_sensor_data');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+
+            // ✅ Update real-time sensor readings
+            currentMoisture.textContent = data.soil_moisture ? `${data.soil_moisture}%` : "No Data";
+            currentTemp.textContent = data.temperature ? `${data.temperature}°C` : "No Data";
+            currentHumidity.textContent = data.humidity ? `${data.humidity}%` : "No Data";
+            currentLight.textContent = data.light_intensity ? `${data.light_intensity} lux` : "No Data";
+
+            console.log("Updated Real-Time Sensor Data:", data);
+        } catch (error) {
+            console.error('Error fetching sensor data:', error);
+        }
+    }
+
+    // ✅ Fetch ideal plant data when user enters a plant name
+    async function fetchPlantData() {
+        if (!selectedPlant) return;
 
         try {
             const response = await fetch('http://192.168.0.52:5002/compare_plant', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: plantName })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: selectedPlant })
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
+            if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
-            
-            // Update UI with received data
+
+            // ✅ Update UI with recommended values & suggestions
+            recommendedSection.classList.remove('hidden');
+            suggestionSection.classList.remove('hidden');
+
             recommendedMoisture.textContent = data.plant?.ideal_moisture ? `${data.plant.ideal_moisture}%` : "No Data";
             recommendedHumidity.textContent = data.plant?.ideal_humidity ? `${data.plant.ideal_humidity}%` : "No Data";
             recommendedLight.textContent = data.plant?.ideal_light ? `${data.plant.ideal_light} lux` : "No Data";
             recommendedTemperature.textContent = data.plant?.ideal_temperature ? `${data.plant.ideal_temperature}°C` : "No Data";
-            currentMoisture.textContent = data.sensor_data?.soil_moisture ? `${data.sensor_data.soil_moisture}%` : "No Data";
-            currentTemp.textContent = data.sensor_data?.temperature ? `${data.sensor_data.temperature}°C` : "No Data";
-            currentHumidity.textContent = data.sensor_data?.humidity ? `${data.sensor_data.humidity}%` : "No Data";
-            currentLight.textContent = data.sensor_data?.light_intensity ? `${data.sensor_data.light_intensity} lux` : "No Data";
             careSuggestion.textContent = data.suggestions?.length ? data.suggestions.join(", ") : "No suggestion available";
 
-            console.log("API Response:", data);
-
-            // Show results
-            resultCard.classList.remove('hidden');
+            console.log("Updated Ideal Plant Data:", data);
         } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to fetch plant data. Please try again.');
-        } finally {
-            loadingIndicator.classList.add('hidden');
+            console.error('Error fetching plant data:', error);
         }
+    }
+
+    fetchSensorData();
+    setInterval(fetchSensorData, 5000);
+
+    submitBtn.addEventListener('click', () => {
+        selectedPlant = plantNameInput.value.trim();
+        
+        if (!selectedPlant) {
+            alert('Please enter a plant name');
+            return;
+        }
+
+        loadingIndicator.classList.remove('hidden');
+        fetchPlantData().then(() => {
+            loadingIndicator.classList.add('hidden');
+        });
     });
 
-    // Allow form submission with Enter key
     plantNameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             submitBtn.click();
         }
     });
-}); 
+});

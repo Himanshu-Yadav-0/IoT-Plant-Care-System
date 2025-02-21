@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTemp = document.getElementById('currentTemp');
     const currentHumidity = document.getElementById('currentHumidity');
     const currentLight = document.getElementById('currentLight');
+    const currentpumpstatus = document.getElementById('currentpumpstatus');
     const careSuggestion = document.getElementById('careSuggestion');
 
     let selectedPlant = ""; // Store selected plant name
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentTemp.textContent = data.temperature ? `${data.temperature}°C` : "No Data";
             currentHumidity.textContent = data.humidity ? `${data.humidity}%` : "No Data";
             currentLight.textContent = data.light_intensity ? `${data.light_intensity} lux` : "No Data";
+            currentpumpstatus.textContent = data.pump_status ? `${data.pump_status}` : "No Data";
 
             console.log("Updated Sensor Data:", data);
 
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ✅ Start real-time sensor data updates
     fetchSensorData();
-    setInterval(fetchSensorData, 3000);
+    setInterval(fetchSensorData, 2000);
 
     // ✅ Handle user input
     submitBtn.addEventListener('click', () => {

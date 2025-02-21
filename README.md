@@ -45,13 +45,13 @@ FRIEND_SERVER_URL=http://your-flask-server-url.com/sensor_data
 
 ### 4️⃣ Start the Flask Server
 ```sh
- python app.py
+ python Backend_server.py
 ```
 
 ### 5️⃣ Start the Frontend (Optional)
 Serve your frontend files using a simple HTTP server:
 ```sh
- python -m http.server 8000
+ Start the with live Server or Just double click the index.html file.
 ```
 Then open `http://localhost:8000` in your browser.
 
@@ -100,11 +100,11 @@ Then open `http://localhost:8000` in your browser.
 *(Insert UI screenshots of the website and API response results.)*
 
 ## 💡 Contributors
-- **Himanshu** - Website & MongoDB Integration
-- **[Friend's Name]** - Flask API & ESP Server
+- **Himanshu Yadav** - Website & MongoDB Integration
+- **Tanish Sidana** - Flask API & ESP Server
 
 ## 📜 License
-This project is **open-source** under the MIT License.
+This project is **open-source**.
 
 ---
 🌱 Happy Coding & Plant Caring! 🌿

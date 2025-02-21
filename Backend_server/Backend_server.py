@@ -1,4 +1,3 @@
-
 from flask_cors import CORS
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
@@ -26,9 +25,9 @@ with open("plants_data.json", "r", encoding="utf-8") as file:
 def add_plant_data():
     if plants_collection.count_documents({}) == 0:
         plants_collection.insert_many(plant_data)
-        print("\U0001F331 1000 Plant dataset added to MongoDB!")
+        print("🌱 1000 Plant dataset added to MongoDB!")
     else:
-        print("\u2705 Plant dataset already exists in MongoDB.")
+        print("✅ Plant dataset already exists in MongoDB.")
 
 # Home Route
 @app.route('/')
@@ -39,7 +38,7 @@ def home():
 def fetch_sensor_data():
     """ Fetch the latest sensor data from friend's server """
     try:
-        sensor_response = requests.get(FRIEND_SERVER_URL, timeout=3)  # Fetch from your friend's Flask server
+        sensor_response = requests.get(FRIEND_SERVER_URL, timeout=3)
         if sensor_response.status_code == 200:
             return sensor_response.json(), 200
         else:
@@ -47,12 +46,12 @@ def fetch_sensor_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 # Compare Real-time Sensor Data with MongoDB Dataset
 @app.route('/compare_plant', methods=['POST'])
 def compare_plant():
     try:
         data = request.json
+        print(f"🌱 Received Data: {data}")
         plant_name = data.get("name", "").lower()
 
         if not plant_name:
@@ -60,13 +59,14 @@ def compare_plant():
 
         # Fetch plant details
         plant = plants_collection.find_one({"name": {"$regex": f"^{plant_name}$", "$options": "i"}})
-
         if not plant:
+            print(f"❌ ERROR: Plant '{plant_name}' not found in MongoDB!")
             return jsonify({"error": "Plant not found"}), 404
-
+        
+        print(f"✅ Found Plant in DB: {plant}")
         plant["_id"] = str(plant["_id"])  # Convert ObjectId to string
 
-        # Fetch real-time sensor data from Tanish's server
+        # Fetch real-time sensor data
         try:
             sensor_response = requests.get(FRIEND_SERVER_URL, timeout=3)
             if sensor_response.status_code == 200:
@@ -74,52 +74,87 @@ def compare_plant():
                 data_source = "real"
             else:
                 raise Exception("Failed to fetch real sensor data")
-        except:
+        except Exception as e:
+            print(f"❌ Sensor Fetch Error: {e}")
             sensor_data = {
-                "soil_moisture": 40,
-                "temperature": 26,
-                "humidity": 55,
-                "light_intensity": 450000
+                "soil_moisture": None,
+                "temperature": None,
+                "humidity": None,
+                "light_intensity": None
             }
             data_source = "dummy"
+
+        # ✅ Ensure None values are replaced with defaults
+        soil_moisture = sensor_data.get("soil_moisture")
+        temperature = sensor_data.get("temperature")
+        humidity = sensor_data.get("humidity")
+        light_intensity = sensor_data.get("light_intensity")
+
+        # ✅ Convert None values to default floats
+        if soil_moisture is None:
+            soil_moisture = 0.0
+        if temperature is None:
+            temperature = 0.0
+        if humidity is None:
+            humidity = 0.0
+        if light_intensity is None:
+            light_intensity = 0.0
 
         # Generate care suggestions
         suggestions = []
         pump_status = "OFF"
-        if sensor_data["soil_moisture"] < plant["ideal_moisture"]:
-            suggestions.append("Increase watering \U0001F331\U0001F4A7")
+
+        if soil_moisture < plant["ideal_moisture"]:
+            suggestions.append("Increase watering 🌱💧")
             pump_status = "ON"
-        elif sensor_data["soil_moisture"] > plant["ideal_moisture"]:
-            suggestions.append("Reduce watering \U0001F6AB\U0001F4A7")
+        elif soil_moisture > plant["ideal_moisture"]:
+            suggestions.append("Reduce watering 🚫💧")
             pump_status = "OFF"
 
-        if sensor_data["temperature"] < plant["ideal_temperature"]:
-            suggestions.append("Increase temperature \U0001F525")
-        elif sensor_data["temperature"] > plant["ideal_temperature"]:
-            suggestions.append("Decrease temperature \u2744")
+        if temperature < plant["ideal_temperature"]:
+            suggestions.append("Increase temperature 🔥")
+        elif temperature > plant["ideal_temperature"]:
+            suggestions.append("Decrease temperature ❄️")
 
-        if sensor_data["humidity"] < plant["ideal_humidity"]:
-            suggestions.append("Increase humidity \U0001F32B")
-        elif sensor_data["humidity"] > plant["ideal_humidity"]:
-            suggestions.append("Decrease humidity \U0001F4A8")
+        if humidity < plant["ideal_humidity"]:
+            suggestions.append("Increase humidity 🌫️")
+        elif humidity > plant["ideal_humidity"]:
+            suggestions.append("Decrease humidity 💨")
 
-        if sensor_data["light_intensity"] < plant["ideal_light"]:
-            suggestions.append("Move plant to more light \u2600")
-        elif sensor_data["light_intensity"] > plant["ideal_light"]:
-            suggestions.append("Move plant to shade \U0001F333")
+        if light_intensity < plant["ideal_light"]:
+            suggestions.append("Move plant to more light ☀️")
+        elif light_intensity > plant["ideal_light"]:
+            suggestions.append("Move plant to shade 🌳")
 
-        # Send updated moisture & pump status to Tanish's server
-        requests.post(UPDATE_MOISTURE_URL, json={"soil_moisture": sensor_data["soil_moisture"], "pump_status": pump_status})
+        # Send updated moisture & pump status to friend's server
+        try:
+            update_response = requests.post(
+                UPDATE_MOISTURE_URL, 
+                json={"soil_moisture": soil_moisture, "pump_status": pump_status},
+                timeout=3
+            )
+            if update_response.status_code == 200:
+                print(f"✅ Pump status updated successfully: {pump_status}")
+            else:
+                print(f"❌ Failed to update pump status. Response: {update_response.text}")
+        except Exception as e:
+            print(f"❌ Error sending pump status update: {e}")
 
         return jsonify({
             "plant": plant,
-            "sensor_data": sensor_data,
+            "sensor_data": {
+                "soil_moisture": soil_moisture,
+                "temperature": temperature,
+                "humidity": humidity,
+                "light_intensity": light_intensity
+            },
             "suggestions": suggestions,
             "data_source": data_source,
             "pump_status": pump_status
         }), 200
 
     except Exception as e:
+        print(f"❌ ERROR: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':

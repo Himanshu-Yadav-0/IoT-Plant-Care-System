@@ -17,27 +17,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const careSuggestion = document.getElementById('careSuggestion');
 
     let selectedPlant = ""; // Store selected plant name
+    let refreshInterval = null; // Store the interval reference
 
-    // ✅ Fetch real-time sensor data immediately and every 5 seconds
+    // ✅ Fetch only sensor data
     async function fetchSensorData() {
         try {
             const response = await fetch('http://192.168.0.52:5002/fetch_sensor_data');
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
 
-            // ✅ Update real-time sensor readings
             currentMoisture.textContent = data.soil_moisture ? `${data.soil_moisture}%` : "No Data";
             currentTemp.textContent = data.temperature ? `${data.temperature}°C` : "No Data";
             currentHumidity.textContent = data.humidity ? `${data.humidity}%` : "No Data";
             currentLight.textContent = data.light_intensity ? `${data.light_intensity} lux` : "No Data";
 
-            console.log("Updated Real-Time Sensor Data:", data);
+            console.log("Updated Sensor Data:", data);
+
+            // ✅ Only update care suggestions if a plant is selected
+            if (selectedPlant) {
+                fetchPlantData();  // Fetch updated care suggestions
+            }
         } catch (error) {
             console.error('Error fetching sensor data:', error);
         }
     }
 
-    // ✅ Fetch ideal plant data when user enters a plant name
+    // ✅ Fetch plant data & care suggestions when user selects a plant
     async function fetchPlantData() {
         if (!selectedPlant) return;
 
@@ -51,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
 
-            // ✅ Update UI with recommended values & suggestions
             recommendedSection.classList.remove('hidden');
             suggestionSection.classList.remove('hidden');
 
@@ -59,17 +63,21 @@ document.addEventListener('DOMContentLoaded', () => {
             recommendedHumidity.textContent = data.plant?.ideal_humidity ? `${data.plant.ideal_humidity}%` : "No Data";
             recommendedLight.textContent = data.plant?.ideal_light ? `${data.plant.ideal_light} lux` : "No Data";
             recommendedTemperature.textContent = data.plant?.ideal_temperature ? `${data.plant.ideal_temperature}°C` : "No Data";
+
+            // ✅ Now care suggestions update correctly
             careSuggestion.textContent = data.suggestions?.length ? data.suggestions.join(", ") : "No suggestion available";
 
-            console.log("Updated Ideal Plant Data:", data);
+            console.log("Updated Plant Data & Care Suggestions:", data);
         } catch (error) {
             console.error('Error fetching plant data:', error);
         }
     }
 
+    // ✅ Start real-time sensor data updates
     fetchSensorData();
-    setInterval(fetchSensorData, 5000);
+    setInterval(fetchSensorData, 3000);
 
+    // ✅ Handle user input
     submitBtn.addEventListener('click', () => {
         selectedPlant = plantNameInput.value.trim();
         

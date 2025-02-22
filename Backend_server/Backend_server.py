@@ -36,7 +36,7 @@ def home():
 
 @app.route('/fetch_sensor_data', methods=['GET'])
 def fetch_sensor_data():
-    """ Fetch the latest sensor data from friend's server """
+    # """ Fetch the latest sensor data from friend's server """
     try:
         sensor_response = requests.get(FRIEND_SERVER_URL, timeout=2)
         if sensor_response.status_code == 200:

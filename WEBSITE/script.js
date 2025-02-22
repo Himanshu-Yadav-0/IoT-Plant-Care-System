@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const careSuggestion = document.getElementById('careSuggestion');
 
     let selectedPlant = ""; // Store selected plant name
-    let refreshInterval = null; // Store the interval reference
+    
 
     // ✅ Fetch only sensor data
     async function fetchSensorData() {
